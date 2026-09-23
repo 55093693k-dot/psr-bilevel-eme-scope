@@ -122,35 +122,41 @@ not convergence to < 1%.
 
 ### 5.1 Origin of the observation
 
-An earlier all-device EME run looked excellent — polarization conversion of **92.4–96.7%** across the
-C-band (9 frequencies, `constraint="unitary"`, 2 port modes). Then the *same* mesh and the *same*
-port-mode count were run with `constraint="passive"`, and the transmission collapsed:
+The coupler-segment run with **4 port modes** gives column sums of 0.99889–0.99999 — no loss channel
+inside the port-mode basis — while the device function in the same run reads 99.525%.
 
-| constraint | port modes | mesh / frequency | result |
+A second reason not to take that reading at face value: on this route the same device returns widely
+inconsistent results depending on the constraint and the port-mode count used.
+
+| run | constraint | port modes | result |
 |---|---|---|---|
-| `unitary` | 2 | 157 cells / 9 frequencies, 1.50–1.58 µm | conversion **92.4–96.7%** |
-| `passive` | 2 | **same** 157 cells / single frequency 1.55 µm | transmission **≈ 0.14%** (IL ≈ 28.5 dB); TM0 channel 0.03% |
+| all-device | `unitary` | 4 | conversion **92.4–96.7%** across the C-band (9 frequencies, 1.50–1.58 µm) |
+| all-device | `passive` | 2 | **TE0 → out0 = 0.14%** (IL **28.539 dB**); TM0 → out1 = 0.03% (IL **34.981 dB**) |
 
-Two runs, ~two orders of magnitude apart, same discretisation. Conclusion: **at least one — most
-likely both — is dominated by the constraint / port-mode truncation, not by the device.** Every
-number from that pair is therefore marked *not referenceable*, and none of them are quoted as device
-performance here.
+Both rows describe the same device on the same route, and they differ by three orders of magnitude.
+They cannot both be device performance; what changed between them is the constraint and the port-mode
+count. Every number in that table is therefore marked *not referenceable*, and none of them are quoted
+as device performance here.
 
-### 5.2 The hypothesis, and its falsification
+Provenance: the `passive` row is reproducible from this repository (`sim/run_eme_passive.py`, recorded
+output in `notes/log_an_passive_m2.txt`); the `unitary` row is read from that run's record, which is
+not shipped here.
+
+### 5.2 The question, and the measured answer
 
 The natural reading of a port-power column sum of exactly ≈ 1 is: *"there is no loss channel inside
 the port-mode basis, so if I add more modes the radiation loss will finally have somewhere to go, and
-the sums will drop below 1."* That was the working hypothesis; the 4 → 6 run was designed as a single
-variable to test it.
+the sums will drop below 1."* That was the question; the 4 → 6 run was designed as a single
+variable to test it, with the pre-run criterion that the key channel must change by < 2%.
 
 **It did not happen.** The minimum column sum moved from 0.99889 to 0.99973 — *upward*. Adding modes
 did not open a radiation-loss channel in this structure.
 
 ![Column sums and conversion versus port-mode count](figures/colsum_and_conversion_vs_modes.png)
 
-*The figure above is the falsification, and it has to be read as two panels at once:
+*The figure above is the answer, and it has to be read as two panels at once:
 **left** — the per-input column sums at 4 and 6 modes. The dashed line at 1.0000 is "no loss channel
-inside the port-mode basis". If the hypothesis held, the points would move **down** across it; instead
+inside the port-mode basis". A positive answer would move the points **down** across it; instead
 the minimum moves **up** (0.99889 → 0.99973). **Right** — the functional conversion, which *does*
 converge: 99.525% → 99.233%, Δ = −0.29%, passing the < 2% test. So: the number that matters for the
 device converges, while the number that would give absolute insertion loss never leaves the port-mode
@@ -176,7 +182,7 @@ listed above.
 - The cause of the boundary in §5.3 is **not identified** here.
 - A larger port-mode basis (10 or more), and a different constraint, were **not tested** — outside the
   scope of this work.
-- The `unitary` vs `passive` discrepancy at small port-mode counts (§5.1) is **not explained** here;
+- The `unitary` vs `passive` discrepancy in §5.1 is **not explained** here;
   both sets of numbers from that pair are marked not referenceable as a result.
 - Device-level return loss, and the insertion loss of the output section (S-bend + `L_t`), are **not
   addressed**.
@@ -222,21 +228,34 @@ python sim/run_bilevel_psr.py --stage eme            # validate + print the cost
 python sim/run_bilevel_psr.py --stage eme --submit   # submit the all-device EME run
 
 python sim/run_eme_coupler.py --modes 6 --y 6        # coupler segment EME (dry-run first!)
-python sim/run_fdtd_short.py  --pol tm               # taper segment, 3D FDTD
-python sim/analyze_coupler_eme.py                    # offline: mode identification + T matrix (0 FlexCredit)
+python sim/run_eme_passive.py  --modes 2             # all-device, constraint=passive (dry-run first!)
+python sim/run_fdtd_short.py  --pol tm               # taper segment, 3D FDTD (prints T(mode0), T(mode1))
+python sim/analyze_coupler_eme.py                    # offline: mode-ID + column sums (4-mode input path)
+python sim/analyze_coupler_eme_modes.py --hdf5 <hdf5> # offline: same, any mode count (the 6-mode table in §4)
 ```
 
 Every script prints a **cost estimate before submitting**; run them without `--submit` first.
 Geometry, materials, mesh, sources and ports are all defined in the scripts — nothing depends on
 files outside this repository.
 
+**Which script produces which table.** §3's taper readings ← `sim/run_fdtd_short.py`. §4's coupler
+tables ← `sim/run_eme_coupler.py --modes 4|6` followed by `sim/analyze_coupler_eme.py` (4-mode input
+path) or `sim/analyze_coupler_eme_modes.py --hdf5 <hdf5>` (any mode count). §5.1's `passive` row ←
+`sim/run_eme_passive.py --modes 2`, with its recorded analysis output in
+`notes/log_an_passive_m2.txt`.
+
 | run | configuration | cost |
 |---|---|---|
-| all-device EME | 2 modes / 157 cells | ≈ 1.335 FlexCredit |
-| all-device EME | 4 modes / 157 cells | ≈ 1.573 FlexCredit |
-| coupler segment EME | 4 modes / 69 cells | 0.3445 FlexCredit |
-| coupler segment EME | 6 modes / 69 cells | 0.3783 FlexCredit (dry-run matched the charge to 1e-16) |
-| all-device 3D FDTD | — | ≈ 30 FlexCredit (not run) |
+| taper segment 3D FDTD | 2-mode monitor, y-span 3.2 µm | **1.7551 FlexCredit** (run record) |
+| all-device EME | 2 modes / 157 cells | **1.335 FlexCredit** (run record) |
+| all-device EME | 4 modes / 157 cells | **1.5725 FlexCredit** (run record) |
+| all-device EME | `passive`, 2 modes | **0.7727 FlexCredit** (run record) |
+| coupler segment EME | 4 modes / 69 cells | **0.3445 FlexCredit** (run record) |
+| coupler segment EME | 6 modes / 69 cells | **0.3783 FlexCredit** (**balance-closed**; dry-run = charge to 1e-16) |
+| all-device 3D FDTD | — | ≈ 30 FlexCredit (**not run**) |
+
+Costs are as recorded for each run. Only the 6-mode coupler run has a per-run balance-difference
+closure; the others are the figures carried in their run records.
 
 ## 8. Data files
 
@@ -246,7 +265,8 @@ files outside this repository.
 | `data/PORT_MODE_NEFF.csv` | n_eff and identity of the 12 port modes (6 per port) | yes — it is an identification table |
 | `data/PORT_MODE_FIELDS.png` | real \|E_y\|² of the 6 port modes at both ports | yes — evidence for the identification |
 | `notes/eme_coupler_4modes.md` | run record, 4-mode coupler segment (Chinese) | source record for §4 |
-| `notes/eme_coupler_6modes_convergence.md` | run record, 6-mode convergence check, incl. the self-rebuttal list and the falsification argument (Chinese) | source record for §4 and §5 |
+| `notes/eme_coupler_6modes_convergence.md` | run record, 6-mode convergence check, incl. the self-rebuttal list and the argument behind the negative answer (Chinese) | source record for §4 and §5 |
+| `notes/log_an_passive_m2.txt` | offline analysis output of the `passive`, 2-port-mode all-device run (`TE0 → out0 = 0.0014`, IL 28.539 dB) | yes — the evidence for the `passive` row of §5.1 |
 
 **Large outputs are deliberately not in this repo**: the cloud `.hdf5` results and the local solver
 project files. They are *results*, not dependencies — the scripts above regenerate them.
