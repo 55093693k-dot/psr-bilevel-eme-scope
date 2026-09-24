@@ -1,0 +1,61 @@
+cff-version: 1.2.0
+message: >-
+  If you use this repository, please cite it as below -- and carry the scope note in the abstract
+  with any number you quote from it.
+title: >-
+  psr-bilevel-eme-scope: a reproduction of a public bi-level adiabatic polarization
+  splitter-rotator (SOI 220 nm + 90 nm partial etch), with a scope note on where EME's
+  authority for this device ends
+abstract: >-
+  A reproduction of the public BilevelPSR design on an SOI 220 nm + 90 nm partial-etch platform,
+  verified in two independent segments by two different numerical methods: the taper segment by
+  3D FDTD (TM0 -> TE1 = 98.35%) and the coupler segment by 3D EME (TE1 -> lower-arm TE0 = 99.233%,
+  passing a 4 -> 6 port-mode convergence check, delta = -0.29%).
+
+
+  SCOPE -- this is part of the citation, not a disclaimer added afterwards. Only the two
+  port-mode-basis conversions above may be quoted. Device-level absolute insertion loss and return
+  loss are NOT certified here: in this structure the EME port-power column sums stay close to 1
+  even after adding port modes, so no radiation-loss channel appears inside the port-mode basis,
+  and that figure would require an all-device 3D FDTD run or a measurement. The output section
+  (S-bend plus the straight section, x = 405..537.8 um) was not covered. The falsification is
+  scoped to this structure, this length scale and the 4 -> 6 mode comparison; it is not a general
+  claim about eigenmode expansion.
+authors:
+  - family-names: "Chan"
+    given-names: "King Ho"
+type: software
+version: "1.0.0"
+date-released: "2026-09-24"
+license: "MIT OR CC-BY-4.0"
+url: "https://github.com/55093693k-dot/psr-bilevel-eme-scope"
+repository-code: "https://github.com/55093693k-dot/psr-bilevel-eme-scope"
+keywords:
+  - silicon photonics
+  - polarization splitter-rotator
+  - eigenmode expansion
+  - EME
+  - FDTD
+  - Tidy3D
+  - SOI
+  - adiabatic coupling
+  - port-mode convergence
+  - negative result
+# Licence split: code (sim/, tools/, all *.py) is MIT; figures, data and documents
+# (including this repository's README and the run records) are CC BY 4.0 -- see LICENSE
+# and LICENSE-figures-and-data.md.  The licence field above is the SPDX expression for the
+# repository as a whole.
+#
+# DOI: leave commented until the first archived release exists (a DOI minted for a release that
+# does not exist yet is worse than no DOI).  After the first Zenodo release, uncomment and fill:
+# doi: "10.5281/zenodo.XXXXXXX"
+# version/date-released above should be bumped together with the release tag.
+references:
+  - type: software
+    title: "BilevelPSR (Tidy3D example notebook)"
+    authors:
+      - name: "Flexcompute (Tidy3D)"
+    url: "https://docs.flexcompute.com/projects/tidy3d/en/v2.11.0/notebooks/BilevelPSR.html"
+    notes: >-
+      The public reference design reproduced here. Its licence and attribution belong to its
+      authors; no document of theirs is reproduced in this repository.

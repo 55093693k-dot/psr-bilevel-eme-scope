@@ -307,5 +307,9 @@ project files. They are *results*, not dependencies — the scripts above regene
   (`docs.flexcompute.com`). Its licence and attribution belong to the original authors; this repo
   only provides a platform adaptation plus validation data, and does not reproduce their documents.
 
+**Citing this repository**: `CITATION.cff` is included, so GitHub shows a *Cite this repository*
+button. A DOI is added with the first archived release — until then please cite the repository URL
+and the date you accessed it, and carry the §6 scope with any number you quote.
+
 **If you reuse a number from here**: please carry the §6 scope with it. Where the number came from a
 figure, also state that the figure is an external (matplotlib) re-plot — see `figures/FIGURES.md`.
