@@ -11,6 +11,8 @@ This covers:
 - **figures** — `*.png` (data plots, field maps, mode maps, structure views)
 - **validation data** — `*.csv`, `*.hdf5`
 - **documents** — `*.md` (including every `README.md`, the run records and the reports)
+- **notebooks** — `*.ipynb`: the text, the figures and the data in them are covered here; the code
+  listings embedded in them are excerpts of the MIT-licensed `*.py` files and stay under MIT
 
 The **code** (`*.py`, i.e. the `sim/` and `tools/` directories) is under the MIT licence —
 see `LICENSE`.

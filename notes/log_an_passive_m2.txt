@@ -1,5 +1,5 @@
 # 离线分析输出（节选）—— 全器件 EME，约束 passive，2 端口模式，单频 1.55 µm
-# 产生方式：sim/run_eme_passive.py --modes 2 --submit 提交后，用同一离线分析流程
+# 产生方式：sim/run_eme_passive.py --modes 2 --submit 提交后，用同一离线分析脚本
 #           读该次运行的 .hdf5，打印 |S21|^2 与逐列和（离线，0 FlexCredit）
 # 用途：报告 §2 里 "TE0 -> out0 = 0.14%（IL 28.539 dB）" 的来源
 file: data_bilevel_psr_eme_passive_m2_lam1550.hdf5 | lambda_um: [1.55]

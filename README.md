@@ -34,7 +34,12 @@ The reference design is the public **BilevelPSR** example from the Tidy3D notebo
 1. the geometry ported to **SOI 220 nm + 90 nm partial etch** (as-is, official parameter values),
 2. the scripts used to verify it, in two independent segments,
 3. the raw validation data (CSV) and the run records (Chinese, as originally written),
-4. one figure that is the whole point of the exercise — see §5.
+4. one figure that is the whole point of the exercise — see §5,
+5. [`psr_bilevel_eme_scope.ipynb`](psr_bilevel_eme_scope.ipynb) — the same report as a Jupyter
+   notebook (the file submitted to the Tidy3D community examples). Its single runnable cell
+   re-derives the column sums and the conversion **offline with numpy alone**: no Tidy3D account,
+   no API key, no network. The scripts appear in it as source listings, because they are
+   command-line programs and do not run as notebook cells (`__file__` / `sys.argv`).
 
 This is a *reproduction and scope* report, not a device datasheet. Nothing here is tape-out advice.
 
@@ -187,7 +192,7 @@ listed above.
 - Device-level return loss, and the insertion loss of the output section (S-bend + `L_t`), are **not
   addressed**.
 
-**The report is published at: _<report link>_.**
+**Companion report**: _<report link — filled in once it is published>_.
 
 ---
 
@@ -244,6 +249,14 @@ path) or `sim/analyze_coupler_eme_modes.py --hdf5 <hdf5>` (any mode count). §5.
 `sim/run_eme_passive.py --modes 2`, with its recorded analysis output in
 `notes/log_an_passive_m2.txt`.
 
+**The same report as a notebook.** [`psr_bilevel_eme_scope.ipynb`](psr_bilevel_eme_scope.ipynb) is
+this report in Jupyter form (identical to the copy submitted to the Tidy3D community examples). Its
+**§0.1 cell is meant to be run** and needs `numpy` only: it recomputes the §4 column sums and the
+conversion straight from the run records, prints them next to the values quoted here, and asserts
+them — no Tidy3D account, no API key, no network. The scripts appear in it as **source listings**,
+not as cells, because they are command-line programs (`__file__` / `sys.argv`) and do not run as
+notebook cells.
+
 | run | configuration | cost |
 |---|---|---|
 | taper segment 3D FDTD | 2-mode monitor, y-span 3.2 µm | **1.7551 FlexCredit** (run record) |
@@ -282,13 +295,14 @@ project files. They are *results*, not dependencies — the scripts above regene
 这条直觉被实测否证。要这个指标只能走全器件 3D FDTD 或流片实测。
 
 **可引用的只有两个数**：`98.35%` 与 `99.233%`；引用时请一并引用 §6 的限制条款。
-（配套工程报告**已发布**（英文原文）：**_(报告链接)_**。）
+（配套工程报告**另行发布**（英文原文）；链接上线后回填：**_(报告链接)_**。）
 
 ## Licence & attribution
 
 - **Code** (`sim/`, `tools/`, all `*.py`): **MIT** — see `LICENSE`.
-- **Everything else** (figures `*.png`, data `*.csv`, documents `*.md` incl. this README and the
-  run records): **CC BY 4.0** — see `LICENSE-figures-and-data.md`.
+- **Everything else** (figures `*.png`, data `*.csv`, documents `*.md` and the notebook `*.ipynb`,
+  incl. this README and the run records): **CC BY 4.0** — see `LICENSE-figures-and-data.md`.
+  In the notebook, only the embedded listings of `sim/*.py` remain MIT (see that file).
 - The **reference design** is the public **BilevelPSR** example from Flexcompute / Tidy3D
   (`docs.flexcompute.com`). Its licence and attribution belong to the original authors; this repo
   only provides a platform adaptation plus validation data, and does not reproduce their documents.

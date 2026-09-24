@@ -7,7 +7,7 @@
 
 阶段：
   --stage geometry   出结构图（俯视 + 横截面，含尺寸标注）—— 跑仿真前先核对几何
-  --stage modes      本地 ModeSolver 在该示例的 4 个 x 位置复算模式，与该示例的自检表比对（含 neff>1.44 物理窗口检查）
+  --stage modes      本地 ModeSolver 在该示例的 4 个 x 位置复算模式，与该示例自带的核对表比对（含 neff>1.44 物理窗口检查）
 """
 from __future__ import annotations
 
@@ -102,7 +102,7 @@ def make_structures(p):
 
 
 # ---------------------------------------------------------------------------
-# 结构图（规则 3）
+# 结构图
 # ---------------------------------------------------------------------------
 def draw_xsec_mid(ax, p):
     """x=L_blt/2 截面：部分刻蚀平板（w_pes @ t_pes）+ 上波导（w_2 @ t_si）。"""
@@ -173,7 +173,7 @@ def small_sim(p, x_max=None, y_span=7.0, z_span=1.75):
 
 def full_sim(p):
     """**整器件**仿真域（仅用于结构绘图；不构建网格，故 ~500 µm 也无成本）。
-    y 跨度按用户要求取 **±6 µm**（12 µm），避免边缘波导被截断。"""
+    y 跨度取 **±6 µm**（12 µm），避免边缘波导被截断。"""
     sio2 = td.material_library["SiO2"]["Palik_Lossless"]
     x_end = p["L_blt"] + p["L_s"] + p["L_ac"] + p["L_t"] + 2 * p["R"] * p["theta"] + 20
     return td.Simulation(
@@ -201,7 +201,7 @@ def stage_geometry(p):
     os.makedirs(figs, exist_ok=True)
     sim, x_end = full_sim(p)
     x_lo, x_hi = -5.0, x_end
-    geometry_bounds(p)          # 几何自检（按几何自检流程）：打印结构包围盒，核对 y 域 ±6 µm 是否完整覆盖
+    geometry_bounds(p)          # 打印结构包围盒，核对 y 域 ±6 µm 是否完整覆盖
 
     # ① 整器件俯视（x 与 y 比例不同，图注已说明）
     fig, axs = plt.subplots(2, 1, figsize=(24, 7), dpi=130)
@@ -250,7 +250,7 @@ def stage_geometry(p):
 
 
 # ---------------------------------------------------------------------------
-# 本地模式自检（免费）：在该示例的 4 个 x 位置复算模式，与该示例的自检表比对
+# 本地模式复核（免费）：在该示例的 4 个 x 位置复算模式，与该示例自带的核对表比对
 # ---------------------------------------------------------------------------
 def xsec_model(p, x):
     """按该示例参数给出 x 处的**局部截面**（宽度随 x 线性/分段插值）。"""
@@ -280,7 +280,7 @@ def xsec_model(p, x):
 
 def xsec_sim_plane(p, x, y_c=0.0):
     """**Tidy3D 约定**：器件沿 x 传播 → 模式平面为 **x-normal**（面内轴 = y(横向分离), z(高度)）。
-    局部截面按该示例的局部尺寸构建；仿真域 y 取 **±6 µm**（用户要求），平面取 ±1.5 µm。"""
+    局部截面按该示例的局部尺寸构建；仿真域 y 取 **±6 µm**，平面取 ±1.5 µm。"""
     si = si_medium()
     sio2 = td.material_library["SiO2"]["Palik_Lossless"]
     m = xsec_model(p, x)
@@ -302,7 +302,7 @@ def xsec_sim_plane(p, x, y_c=0.0):
 
 
 def stage_modes(p):
-    """该示例的自检表：x=0 → TE0/TM0；L_blt/2 → TE0/混合；L_blt+L_s → TE0/TE1；耦合器末端 → 上下波导 TE0。"""
+    """该示例自带的核对表：x=0 → TE0/TM0；L_blt/2 → TE0/混合；L_blt+L_s → TE0/TE1；耦合器末端 → 上下波导 TE0。"""
     positions = [0.0, p["L_blt"] / 2, p["L_blt"] + p["L_s"],
                  p["L_blt"] + p["L_s"] + p["L_ac"]]
     from tidy3d.plugins.mode import ModeSolver
@@ -367,7 +367,7 @@ def make_eme_sim(p, num_cells=60, num_modes=4):
     x_dev = p["L_blt"] + p["L_s"] + p["L_ac"] + p["L_t"] + 2 * p["R"] * p["theta"]
     pad = 20.0
     return td.EMESimulation(
-        center=(x_dev / 2, 0, 0.11), size=(x_dev + 2 * pad, 12.0, 1.75),   # y=±6 µm（用户要求）
+        center=(x_dev / 2, 0, 0.11), size=(x_dev + 2 * pad, 12.0, 1.75),   # y=±6 µm
         medium=sio2, structures=make_structures(p),
         axis=0, freqs=freqs_of(p),
         grid_spec=td.GridSpec.auto(min_steps_per_wvl=20, wavelength=p["lda0"]),
@@ -388,21 +388,21 @@ def make_eme_sim(p, num_cells=60, num_modes=4):
 def stage_eme(p, submit=False):
     """EME 验证：输入 TE0/TM0 注入 → 读输出端两个波导的 TE0/TM0 透射（判 TM→TE>90%）。"""
     sim = make_eme_sim(p, num_modes=2)   # 单一变量：端口模式 4→2（去掉近截止/频率跳变模）
-    print("=== 几何自检报告 ===")
+    print("=== 几何核对报告 ===")
     print(" 传播方向 = +x | 分离方向 = y（两波导横向分开）| 高度方向 = z（Si 220nm + 90nm 部分刻蚀，单层）")
     print(f" 端口平面 = **x-normal**（垂直于 +x）| 仿真域 size={sim.size} center={sim.center}")
     print(f" 模式索引：输入 mode_index_in 0=TE0 / 1=TM0（按 neff 识别）；输出端按 neff 区分上下波导")
-    print("=== 提交前校验（规则 2）===")
+    print("=== 提交前校验 ===")
     sim.validate_pre_upload()
     print(" validate_pre_upload: PASS")
     task = f"bilevel_psr_eme_Lac{p['L_ac']:.0f}"
     job = web.Job(simulation=sim, task_name=task, verbose=False)
     print(" estimate_cost (FlexCredit):", web.estimate_cost(job.task_id))
     if not submit:
-        print(" [dry-run] 未提交。加 --submit 提交（我会先报成本）。")
+        print(" [dry-run] 未提交；加 --submit 才提交（会先打印成本估算）。")
         return None
     data = job.run(path=os.path.join(HERE, f"data_{task}.hdf5"))
-    print(" === smatrix 结构（先看再索引，不做假设）===")
+    print(" === smatrix 结构 ===")
     try:
         S = data.smatrix
         print(" smatrix dims:", list(getattr(S, "dims", {})))

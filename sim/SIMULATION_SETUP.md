@@ -8,11 +8,11 @@
 ```powershell
 # 0) 依赖：pip install tidy3d==2.12；配置 API key（~/.config/tidy3d/config.toml）
 python run_bilevel_psr.py --stage geometry      # 出整器件结构图（本地，免费）
-python run_bilevel_psr.py --stage modes         # 本地模式自检（免费）：TE0/TM0 有效折射率随 x 的演化
+python run_bilevel_psr.py --stage modes         # 本地模式复核（免费）：TE0/TM0 有效折射率随 x 的演化
 python run_bilevel_psr.py --stage eme           # 提交前校验 + 打印**估算成本**（不提交，免费）
 python run_bilevel_psr.py --stage eme --submit  # 真正提交（按估计成本计费，见 §6）
 ```
-脚本在 `--stage eme` 时会先打印**几何自检报告**并调用 `validate_pre_upload()`，通过后才提交。
+脚本在 `--stage eme` 时会先打印**几何核对报告**并调用 `validate_pre_upload()`，通过后才提交。
 
 ## 2. 结构域与坐标
 

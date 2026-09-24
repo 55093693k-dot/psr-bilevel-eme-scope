@@ -340,7 +340,7 @@ def rotator_xsec(ax):
 PANELS = {
     "splitter": [("topview", splitter_top, (10, 6)), ("xsec", splitter_xsec, (8, 4.5))],
     "delay_line": [("topview", delay_top, (10, 6)), ("xsec", delay_xsec, (8, 4.5))],
-    # 用户口径（2026-09-11）：只出**整器件**图、固定长方形比例；**不做局部放大**（z1–z4 已按用户要求移除）
+    # 出图口径（2026-09-11）：只出**整器件**图、固定长方形比例；**不做局部放大**
     "psr_rotator": [("topview", rotator_top, (16, 6)), ("xsec", rotator_xsec, (9, 6))],
 }
 
