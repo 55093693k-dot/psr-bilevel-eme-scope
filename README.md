@@ -3,6 +3,11 @@
 **A reproduction of a public bi-level adiabatic polarization-splitter-rotator (PSR) design on
 SOI 220 nm + 90 nm partial etch — plus a scope note on where EME's authority for this device ends.**
 
+**Companion repositories**: the passive-device library this design was selected from
+([silicon-photonics-device-library](https://github.com/55093693k-dot/silicon-photonics-device-library)),
+and the figure-provenance / reference tools used for its figures
+([photonics-fig-tools](https://github.com/55093693k-dot/photonics-fig-tools)).
+
 Short version:
 
 - The mechanism is reproduced and cross-validated by **two independent methods**:
