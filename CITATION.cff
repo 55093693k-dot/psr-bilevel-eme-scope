@@ -24,6 +24,7 @@ abstract: >-
 authors:
   - family-names: "Chan"
     given-names: "King Ho"
+    orcid: "https://orcid.org/0009-0002-0435-2030"
 type: software
 version: "1.0.2"
 date-released: "2026-09-26"
@@ -51,9 +52,10 @@ keywords:
 # and LICENSE-figures-and-data.md.  The two identifiers above are the machine-readable form of
 # that split (an array means "OR").
 #
-# DOI: leave commented until the first archived release exists (a DOI minted for a release that
-# does not exist yet is worse than no DOI).  After the first Zenodo release, uncomment and fill:
-# doi: "10.5281/zenodo.XXXXXXX"
+# DOI of the archived v1.0.2 release (2026-09-26): this is the *version* DOI.  The *concept* DOI that
+# covers every version of this repository is 10.5281/zenodo.22976303.  A later release gets its own
+# version DOI from Zenodo; update the line below by hand at that point.
+doi: "10.5281/zenodo.22976304"
 # version/date-released above are bumped together with the release tag.
 #
 # Zenodo (the service that mints the DOI) cannot read an array in the licence field, so the
