@@ -25,9 +25,14 @@ authors:
   - family-names: "Chan"
     given-names: "King Ho"
 type: software
-version: "1.0.0"
-date-released: "2026-09-24"
-license: "MIT OR CC-BY-4.0"
+version: "1.0.2"
+date-released: "2026-09-26"
+# An SPDX *expression* is not allowed here: the Citation File Format schema
+# (https://citation-file-format.github.io/1.2.0/schema.json, checked 2026-09-26) accepts only
+# identifiers from the SPDX list, as a single string or as an array.  An array means "OR".
+license:
+  - "MIT"
+  - "CC-BY-4.0"
 url: "https://github.com/55093693k-dot/psr-bilevel-eme-scope"
 repository-code: "https://github.com/55093693k-dot/psr-bilevel-eme-scope"
 keywords:
@@ -43,13 +48,17 @@ keywords:
   - negative result
 # Licence split: code (sim/, tools/, all *.py) is MIT; figures, data and documents
 # (including this repository's README and the run records) are CC BY 4.0 -- see LICENSE
-# and LICENSE-figures-and-data.md.  The licence field above is the SPDX expression for the
-# repository as a whole.
+# and LICENSE-figures-and-data.md.  The two identifiers above are the machine-readable form of
+# that split (an array means "OR").
 #
 # DOI: leave commented until the first archived release exists (a DOI minted for a release that
 # does not exist yet is worse than no DOI).  After the first Zenodo release, uncomment and fill:
 # doi: "10.5281/zenodo.XXXXXXX"
-# version/date-released above should be bumped together with the release tag.
+# version/date-released above are bumped together with the release tag.
+#
+# Zenodo (the service that mints the DOI) cannot read an array in the licence field, so the
+# archived record takes its licence from `.zenodo.json`, which Zenodo prefers over this file
+# whenever both are present.  Keep the two files' scope text in step if either one changes.
 references:
   - type: software
     title: "BilevelPSR (Tidy3D example notebook)"
