@@ -60,9 +60,9 @@ ax = axs[0]
 xpos = [0.0, 1.0]
 for i, (x, m) in enumerate(zip(xpos, MODES)):
     v = COLSUM[m]
-    ax.plot([x, x], [min(v), max(v)], color="#8899aa", lw=4, solid_capstyle="round",
+    ax.plot([x, x], [min(v), max(v)], color="#8899aa", lw=2.5, solid_capstyle="round",
             zorder=1, alpha=0.55)
-    ax.plot([x] * len(v), v, "o", ms=5, mfc="white", mec="#1f4e79", mew=1.1,
+    ax.plot([x] * len(v), v, "o", ms=3.5, mfc="white", mec="#1f4e79", mew=0.9,
             zorder=3)
     # 数值标注与说明文字移交图注（见稿件 Fig. 3 的 \caption）
 ax.axhline(1.0, ls="--", lw=1.2, color="#b00020")
@@ -77,7 +77,7 @@ ax.grid(alpha=0.25, axis="y")
 # --------------------------------------------------------------- right panel
 ax = axs[1]
 conv = [CONV[m] for m in MODES]
-ax.plot(xpos, conv, "o-", color="#c94f2b", lw=1.4, ms=5)
+ax.plot(xpos, conv, "o-", color="#c94f2b", lw=1.1, ms=3.5)
 # 数值标签与 "delta = ..." 说明移交图注
 ax.set_xticks(xpos)
 ax.set_xticklabels(["%d modes" % m for m in MODES])
