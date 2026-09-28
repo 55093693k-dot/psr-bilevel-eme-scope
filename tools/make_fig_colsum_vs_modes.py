@@ -64,48 +64,31 @@ for i, (x, m) in enumerate(zip(xpos, MODES)):
             zorder=1, alpha=0.55)
     ax.plot([x] * len(v), v, "o", ms=7, mfc="white", mec="#1f4e79", mew=1.4,
             zorder=3)
-    ax.annotate("min %.5f" % min(v), (x, min(v)), textcoords="offset points",
-                xytext=(0, 10), ha="center", fontsize=8, color="#1f4e79")
+    # 数值标注与说明文字移交图注（见稿件 Fig. 3 的 \caption）
 ax.axhline(1.0, ls="--", lw=1.2, color="#b00020")
-ax.text(0.5, 1.000038, "1.0000 = no loss channel inside the port-mode basis",
-        fontsize=7.8, color="#b00020", ha="center", va="bottom")
-ax.annotate("", xy=(1.28, 0.99872), xytext=(-0.28, 0.99872),
-            arrowprops=dict(arrowstyle="->", color="#2e7d32", lw=1.2))
-ax.text(0.5, 0.99878, "the minimum moves UP, not down  \u2192  "
-                      "no radiation-loss channel appeared",
-        fontsize=8.2, color="#2e7d32", ha="center", va="bottom")
 ax.set_xticks(xpos)
 ax.set_xticklabels(["%d modes" % m for m in MODES])
 ax.set_xlim(-0.35, 1.35)
 ax.set_ylim(0.99860, 1.00022)
 ax.set_ylabel("EME port-power column sum\n(one circle = one input mode)")
-ax.set_title("Column sums do NOT drop below 1", fontsize=10.5)
+ax.set_title("Column sums stay at 1", fontsize=12)
 ax.grid(alpha=0.25, axis="y")
 
 # --------------------------------------------------------------- right panel
 ax = axs[1]
 conv = [CONV[m] for m in MODES]
 ax.plot(xpos, conv, "o-", color="#c94f2b", lw=1.8, ms=7)
-for x, m, c in zip(xpos, MODES, conv):
-    ax.annotate("%.3f%%" % c, (x, c), textcoords="offset points", xytext=(0, 10),
-                ha="center", fontsize=9, color="#8a3418")
-ax.annotate("", xy=(1.0, CONV[6]), xytext=(0.0, CONV[4]),
-            arrowprops=dict(arrowstyle="->", color="#666666", lw=1.1, ls="dashed"))
-ax.text(0.5, (CONV[4] + CONV[6]) / 2 - 0.20,
-        "delta = -0.29%   (convergence test: < 2%)", fontsize=8.6,
-        color="#444444", ha="center")
+# 数值标签与 "delta = ..." 说明移交图注
 ax.set_xticks(xpos)
 ax.set_xticklabels(["%d modes" % m for m in MODES])
 ax.set_xlim(-0.35, 1.35)
 ax.set_ylim(98.6, 99.95)
 ax.set_ylabel("TE1 -> lower-arm TE0 conversion (%)")
-ax.set_title("The functional number DOES converge", fontsize=10.5)
+ax.set_title("Conversion converges", fontsize=12)
 ax.grid(alpha=0.25, axis="y")
-ax.text(0.5, 99.88, "port-mode-basis conversion  (not device efficiency)",
-        fontsize=7.8, color="#555555", ha="center", style="italic")
+# 面板内那条斜体说明移交图注
 
-fig.suptitle("Adding EME port modes 4 -> 6:  conversion converges, "
-             "column sums stay at ~1", fontsize=11.5)
+fig.suptitle("EME port modes 4 -> 6", fontsize=13)
 fig.tight_layout(rect=(0, 0.035, 1, 0.95))
 FC.save(fig, OUT, "external", PROV, bbox_inches="tight")
 plt.close(fig)

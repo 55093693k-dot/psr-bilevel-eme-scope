@@ -82,7 +82,9 @@ def save_panel(drawer, path, figsize=(9, 5), provenance=""):
     without it the figure is still produced, just without the machine-readable
     label.
     """
-    fig, ax = plt.subplots(figsize=figsize, dpi=140)
+    # dpi 提到 200：面板从 16:6 收窄到 9.5:6 之后，若仍是 140 dpi，
+    # 03_make_figures_pdf.py 的验收线（正文宽 5.25 in 下 ≥300 dpi）会不过。
+    fig, ax = plt.subplots(figsize=figsize, dpi=200)
     drawer(ax)
     fig.tight_layout()
     if FC is not None:
@@ -253,22 +255,22 @@ def rotator_top(ax, seg=None):
     ylo_, yhi_ = min(ys), max(ys)
     # 背景
     ax.add_patch(Rectangle((x0, ylo_ - 1.8), x1 - x0, (yhi_ - ylo_) + 3.6, fc=OX, ec="none", zorder=0))
-    ax.text(x0 + 0.02 * (x1 - x0), ylo_ - 1.0, "SiO2 cladding", fontsize=7, color="#4a6fa5")
     # 90 nm 部分刻蚀平板（taper→耦合器末端）
     ax.add_patch(Rectangle((0, -p["w_pes"] / 2), min(x_ac, x1) - max(0, x0) if x0 > 0 else x_ac,
                            p["w_pes"], fc="#f3c9a8", ec="none", zorder=1))
     ax.add_patch(Polygon(up + dn, closed=True, fc=SI, ec="k", lw=0.5, zorder=3))
     if up2:
         ax.add_patch(Polygon(up2 + dn2, closed=True, fc=SI, ec="k", lw=0.5, zorder=3))
-    # 分段长度尺寸线
-    for xa, xb, t in ((0, x_blt, "L_blt = 100 µm"), (x_blt, x_str, "L_s = 5 µm"),
-                      (x_str, x_ac, "L_ac = 300 µm"), (x_ac, x_end, "L_t 30 + S-bend")):
-        if xb > x0 and xa < x1:
-            dim_h(ax, max(xa, x0), min(xb, x1), ylo_ - 0.55, t, dy=0.06, fs=7)
-    # 间隙尺寸线（该段含 x_ac 才画）
-    if x0 - 1 <= x_ac <= x1 + 1:
-        xg = x_ac - 3 if not whole else x_ac + 10
-        dim_v(ax, -p["gap"] / 2, p["gap"] / 2, xg, "gap = 200 nm", dx=0.03 * (x1 - x0), fs=7)
+    # 分段长度尺寸线（只在"等比放大"的局部视图里画；整器件视图的文字标注移交图注）
+    if not whole:
+        for xa, xb, t in ((0, x_blt, "L_blt = 100 µm"), (x_blt, x_str, "L_s = 5 µm"),
+                          (x_str, x_ac, "L_ac = 300 µm"), (x_ac, x_end, "L_t 30 + S-bend")):
+            if xb > x0 and xa < x1:
+                dim_h(ax, max(xa, x0), min(xb, x1), ylo_ - 0.55, t, dy=0.06, fs=7)
+        # 间隙尺寸线（该段含 x_ac 才画）
+        if x0 - 1 <= x_ac <= x1 + 1:
+            xg = x_ac - 3
+            dim_v(ax, -p["gap"] / 2, p["gap"] / 2, xg, "gap = 200 nm", dx=0.03 * (x1 - x0), fs=7)
     # 臂宽尺寸线（等比视图才看得见）
     if not whole:
         xm = x0 + 0.35 * (x1 - x0)
@@ -288,18 +290,9 @@ def rotator_top(ax, seg=None):
         ax.set_ylim(ylo_ - 1.05, yhi_ + 0.85)
         ax.set_aspect(mag)
     else:
-        ax.text(0.5 * x_blt, yhi_ + 0.55, "bi-level taper: w_1 0.45 → w_2 0.55 → w_3 0.85 µm",
-                fontsize=7, ha="center")
-        ax.text(x_str + p["L_ac"] * 0.5, yhi_ + 0.55, "adiabatic coupler (w_5 0.65 / w_6 0.5 µm)",
-                fontsize=7, ha="center")
-        ax.text(x_str + 2, ylo_ - 0.95, "lower arm appears at x = L_blt + L_s (w_4 = 0.2 µm)", fontsize=7)
-        ax.text(x_end + 3, 0.0, "S-bend\nR 300 µm\n2θ 12°", fontsize=7, va="center")
-        xcomp = max(1, round((x1 - x0) / max(yhi_ - ylo_, 1e-6) / 4.2))
-        ax.text(0.99, 0.02, "x compressed ≈×%d (NOT to scale) — y (widths) as drawn; see z1–z4 for detail views"
-                % xcomp, transform=ax.transAxes, ha="right", va="bottom", fontsize=6.5, color="#555555")
-        ax.set_title("WHOLE-DEVICE top view — bi-level taper PSR (BilevelPSR replica) | single Si layer "
-                     "220 nm + 90 nm partial etch\ntotal length ≈ 537.8 µm | x compressed for readability",
-                     fontsize=9)
+        # 整器件视图：图上只留几何与一条短标题。尺寸/宽度/弯曲等文字标注按
+        # "能写进图解的就不写进图中"的口径移交图注（见稿件 Fig. 1 的 \caption）。
+        ax.set_title("Whole-device top view (not to scale)", fontsize=12)
         ax.set_ylim(ylo_ - 1.35, yhi_ + 1.0)
         ax.set_aspect("auto")
     ax.set_xlim(x0, x1)
@@ -323,16 +316,10 @@ def rotator_xsec(ax):
                            ec="k", lw=0.4, zorder=1))
     ax.add_patch(Rectangle((y_up - p["w_5"] / 2, 0.0), p["w_5"], p["t_si"], fc=SI, ec="k", lw=0.5, zorder=2))
     ax.add_patch(Rectangle((y_lo - p["w_6"] / 2, 0.0), p["w_6"], p["t_si"], fc=SI, ec="k", lw=0.5, zorder=2))
-    dim_h(ax, y_up - p["w_5"] / 2, y_up + p["w_5"] / 2, p["t_si"] + 0.30, "w_5 = 650 nm")
-    dim_h(ax, y_lo - p["w_6"] / 2, y_lo + p["w_6"] / 2, p["t_si"] + 0.30, "w_6 = 500 nm")
-    dim_h(ax, y_lo + p["w_6"] / 2, y_up - p["w_5"] / 2, p["t_si"] + 0.62, "gap = 200 nm", dy=0.06)
-    dim_h(ax, -p["w_pes"] / 2, p["w_pes"] / 2, -0.34, "slab w_pes = 1.55 µm", dy=-0.30, fs=7)
-    dim_v(ax, 0, p["t_pes"], p["w_pes"] / 2 + 0.12, "90 nm", dx=0.06, fs=7)
-    dim_v(ax, 0, p["t_si"], -p["w_pes"] / 2 - 0.30, "220 nm", dx=0.06, fs=7)
-    ax.text(-1.0, -0.70, "SiO2 (n=1.444)", fontsize=7, color="#4a6fa5")
+    # 尺寸与材料文字按同一口径移交图注（见稿件 Fig. 2 的 \caption）
     ax.set_xlim(-1.05, 1.05)
     ax.set_ylim(-0.8, 1.15)
-    ax.set_title("Cross-section at the adiabatic coupler (two 220 nm ribs on a 90 nm slab)")
+    ax.set_title("Cross-section at the coupler", fontsize=12)
     ax.set_xlabel("lateral y (µm)")
     ax.set_ylabel("height z (µm)")
 
@@ -340,8 +327,8 @@ def rotator_xsec(ax):
 PANELS = {
     "splitter": [("topview", splitter_top, (10, 6)), ("xsec", splitter_xsec, (8, 4.5))],
     "delay_line": [("topview", delay_top, (10, 6)), ("xsec", delay_xsec, (8, 4.5))],
-    # 出图口径（2026-09-11）：只出**整器件**图、固定长方形比例；**不做局部放大**
-    "psr_rotator": [("topview", rotator_top, (16, 6)), ("xsec", rotator_xsec, (9, 6))],
+    # 出图口径（2026-09-11 / 09-28 修）：只出**整器件**图；面板不拉长（宽高比 ≈1.6:1），文字标注移交图注。
+    "psr_rotator": [("topview", rotator_top, (9.5, 6)), ("xsec", rotator_xsec, (9, 6))],
 }
 
 

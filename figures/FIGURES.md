@@ -8,30 +8,33 @@ figure** and in its PNG metadata.
 | figure | what it is | channel | channel label present? |
 |---|---|---|---|
 | `colsum_and_conversion_vs_modes.png` | matplotlib **re-plot of tabulated EME results** (column sums + conversion at 4 and 6 port modes) | `external` | ✅ yes — on-figure footer **and** PNG `tEXt` chunk `External-Plot` |
-| `device_topview.png` | matplotlib **re-draw from the solver model** — two z-slices of the whole device (partial-etch slab layer and waveguide layer) | `external` | ⚠️ **no** — see "Known gap" below |
-| `device_cross_section.png` | matplotlib **re-draw from the solver model** — cross-section at the adiabatic coupler | `external` | ⚠️ **no** — see "Known gap" below |
+| `device_topview.png` | matplotlib **re-draw from the solver model** — two z-slices of the whole device (partial-etch slab layer and waveguide layer) | `external` | ✅ yes — on-figure footer **and** PNG `tEXt` chunk `External-Plot` (figure regenerated 2026-09-28) |
+| `device_cross_section.png` | matplotlib **re-draw from the solver model** — cross-section at the adiabatic coupler | `external` | ✅ yes — on-figure footer **and** PNG `tEXt` chunk `External-Plot` (figure regenerated 2026-09-28) |
 
 **None of these three is a solver export.** Do not quote any of them as "the solver's own view".
 For the two referenceable numbers (`98.35%`, `99.233%`), cite §3 and §6 of the README — never a figure.
 
-## Known gap (stated rather than hidden)
+## Known gap — **closed 2026-09-28**
 
-The two device figures were produced before the channel-labelling convention was wired into the
-generator that draws them, so they carry the matplotlib software tag but **not** the channel label.
-They are kept because they show the actual two-layer structure, which the schematic generator does
-not.
+The two device figures used to be the ones without a channel label: they had been produced before the
+labelling convention reached the generator that draws them. Both were **regenerated on 2026-09-28**
+with `tools/make_structure_fig.py`, so all three figures now carry the on-figure footer and the PNG
+`tEXt` chunk `External-Plot`. The same pass applied the 2026-09-28 presentation rule: **text that a
+caption can carry is no longer drawn inside the figure** (the dimensions now live in the manuscript's
+figure captions), and the whole-device panel is no longer a long strip (aspect 3.46:1 -> 1.56:1).
 
-What is in place now:
+How to regenerate (the generator writes the device id in the name, so rename afterwards):
 
-- `tools/make_structure_fig.py` **labels every figure it writes** (on-figure footer + PNG `tEXt`
-  chunk) if `fig_channel` is importable — and falls back to a plain save if it is not, so it never
-  breaks;
-- so **any structure figure you regenerate carries its channel label**:
+```bash
+python tools/make_structure_fig.py --list
+python tools/make_structure_fig.py --device psr_rotator --out figures
+mv figures/PSR_ROTATE_ADIABATIC_BLT_v1_topview.png figures/device_topview.png
+mv figures/PSR_ROTATE_ADIABATIC_BLT_v1_xsec.png    figures/device_cross_section.png
+python tools/make_fig_colsum_vs_modes.py
+```
 
-  ```bash
-  python tools/make_structure_fig.py --list
-  python tools/make_structure_fig.py --device psr_rotator --out figures
-  ```
+`tools/make_structure_fig.py` **labels every figure it writes** (on-figure footer + PNG `tEXt` chunk)
+if `fig_channel` is importable, and falls back to a plain save if it is not, so it never breaks.
 
   (Note: the regenerated top view is a **schematic** — x compressed, no layer split — so it is not a
   drop-in replacement for the two z-slice figures above.)
@@ -55,5 +58,5 @@ PYTHONPATH=tools python /path/to/fig_index.py --figs figures --index figs_index.
 ```
 
 `fig_index` reports each figure's channel, bytes, pixels and md5, and flags any `external`-channel
-figure whose label chunk is missing. With the current contents it will flag exactly the two figures
-listed in "Known gap" — which is the honest state of this repository.
+figure whose label chunk is missing. With the current contents it flags **nothing**: the two device
+figures were regenerated on 2026-09-28 and now carry the `External-Plot` chunk as well.
