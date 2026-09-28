@@ -28,7 +28,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import fig_channel as FC                                                 # noqa: E402
 
-FIGDIR = os.path.join(HERE, "..", "..", "05_首篇_BilevelPSR与EME边界", "figures")
+def _figdir():
+    """Where the existing figure PNGs live -- found by looking for the file itself."""
+    root = os.path.abspath(os.path.join(HERE, "..", ".."))
+    for dirpath, _dirs, files in os.walk(root):
+        if "device_topview_slab.png" in files:
+            return dirpath
+    return os.path.join(root, "figures")
+
+
+FIGDIR = _figdir()
 PROV = "plane plots re-drawn from the DEVICES['psr_rotator'] geometry (not a solver export)"
 
 RATIO = 1.4                          # canvas proportion, as in the reference plane plot
