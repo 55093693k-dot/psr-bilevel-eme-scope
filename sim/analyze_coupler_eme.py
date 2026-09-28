@@ -138,7 +138,7 @@ try:
         t = T[0]
         P("KEY conversions (single freq):")
         P("  in0 -> out0 (top TE0  -> top TE0)      = %.5f" % t[0, 0])
-        P("  in1 -> out1 (TE1      -> bottom TE0)   = %.5f   <== device function" % t[1, 1])
+        P("  in1 -> out1 (TE1      -> bottom TE0)   = %.5f   <== key channel" % t[1, 1])
         P("  in1 -> out0 (TE1      -> top TE0)      = %.5f   (unwanted)" % t[0, 1])
         P("  in0 -> out1 (top TE0  -> bottom TE0)   = %.5f   (crosstalk)" % t[1, 0])
 

@@ -15,7 +15,7 @@ Short version:
   (3D EME, coupler segment; passes a 4→6 port-mode convergence check, Δ = −0.29%).
 - **Device-level absolute insertion loss is deliberately not quoted.** In this structure the EME
   port-power column sums stay ≈ 1 even after adding port modes (4 → 6), so no radiation-loss
-  channel ever appears in the port-mode basis. Adding modes was tested and **falsified as a route**
+  channel ever appears in the port-mode basis. Adding modes was tested and **ruled out as a route**
   to the loss number.
 - Read [`§5`](#5-why-this-repo-exists-the-column-sum-observation) for the observation and
   [`§6`](#6-scope--limitations-read-before-quoting-any-number) for the quoting rules.
@@ -27,6 +27,8 @@ Short version:
 **Status**: mechanism verified; device-level IL **not** certified.
 **Archived**: `v1.0.2` (2026-09-26) — DOI **[10.5281/zenodo.22976304](https://doi.org/10.5281/zenodo.22976304)**;
 the concept DOI covering every version is **[10.5281/zenodo.22976303](https://doi.org/10.5281/zenodo.22976303)**.
+
+**Wording revision** 2026-09-28: labels and wording — the coupler-segment figure for TM0 → out1 is now printed as **0.032%** where this page previously printed a rounded 0.03%, and the −0.29% column-sum change is now shown with its two per-channel components, 0.246% and 0.044%. No conclusion, criterion or scope changed.
 
 **Cost of the runs reproduced here**: ≈ 0.34 + 0.38 FlexCredit (coupler segment, 4- and 6-mode runs);
 the all-device EME run is ≈ 1.34 FlexCredit. All scripts here are self-contained: geometry, materials,
@@ -86,7 +88,7 @@ Neither one alone would be convincing; together they trace the full adiabatic pa
 
 | Segment | Method / settings | Result |
 |---|---|---|
-| **taper** (x −6…109 µm, TM0 in) | **3D FDTD** (Tidy3D ModeSource → ModeMonitor at x = 105 µm, 2 modes); 12 steps/λ in-plane plus a 20 nm z-override; `run_time = 3.6 ps` (≥ 2× the optical path time) | **TM0 → TE1 = 98.35%** (TM0 → TE0 = 0.0000); segment IL ≈ **0.072 dB** — this is an **upper bound**, the domain was clipped in y |
+| **taper** (domain x −6…109 µm; taper geometry x 0…105 µm; TM0 in) | **3D FDTD** (Tidy3D ModeSource → ModeMonitor at x = 105 µm, 2 modes); 12 steps/λ in-plane plus a 20 nm z-override; `run_time = 3.6 ps` (≥ 2× the optical path time) | **TM0 → TE1 = 98.35%** (TM0 → TE0 = 0.0000); segment IL ≈ **0.072 dB** — this is an **upper bound**, the domain was clipped in y |
 | **coupler** (x 100…410 µm, TE1 in) | **3D EME** (`EMEExplicitGrid`, 69 cells; ports at x = 105 / x = 405; **6 modes**, `constraint="passive"`, single frequency 1.55 µm) | **TE1 → lower-arm TE0 = 99.233%** (passes 4→6 convergence, Δ = −0.29% < 2%); TE1 → upper arm 5e-5; TE0 → upper-arm TE0 = 99.805%; TE0 → lower-arm TE0 = 2e-5 |
 
 **Conclusion carried by these two rows**: `TM0 → (taper) TE1 → (adiabatic coupler) lower-arm TE0`,
@@ -97,7 +99,7 @@ confirmed by two independent methods on two independent sub-domains.
 Mode index is a queue position, not an identity. Identification uses **effective index *and* the
 transverse field centroid**:
 
-| Port | mode | n_eff | field polarity / centroid | identification |
+| Port | mode | n_eff | field polarity / transverse field centroid y_c (Ey intensity; bracket = geometric estimate) | identification |
 |---|---|---|---|---|
 | in, x = 105 | 0 / 1 | **2.7027 / 2.2480** | Ey = 0.902 / 0.659 | upper waveguide **TE0 / TE1** (independent FDTD: 2.7059 / 2.252) |
 | out, x = 405 | 0 / 1 | 2.6057 / **2.4391** | centroid **−0.104 / −0.866** (geometric: −0.10 / −0.875) | upper-arm TE0 / **lower-arm TE0** |
@@ -112,7 +114,7 @@ Single variable changed; domain, ports, mesh, frequency and constraint are byte-
 
 | quantity (λ = 1.55 µm) | 4 modes | **6 modes** | Δ | verdict |
 |---|---|---|---|---|
-| **TE1 → lower-arm TE0** (the device function) | 0.99525 | **0.99233** | **−0.00292 (−0.29%)** | ✅ converged (< 2%) |
+| **TE1 → lower-arm TE0** (the key channel) | 0.99525 | **0.99233** | **−0.00292 (−0.29%)** | ✅ converged (< 2%) |
 | TE0 → upper-arm TE0 (through) | 0.99807 | 0.99805 | −0.00002 | ✅ bit-stable |
 | TE1 → upper-arm TE0 (unwanted) | 0.00005 | 0.00005 | 0 | ✅ |
 | TE0 → lower-arm TE0 (crosstalk) | 0.00002 | 0.00002 | 0 | ✅ |
@@ -125,8 +127,7 @@ Two things are true at once here, and the second one is the reason this reposito
 2. the **column sums do not move away from 1** — the minimum actually moves *up*.
 
 **Scope of this check**: this structure, this length scale, 4 → 6 modes. It does **not** prove
-"EME can never give insertion loss". Also note that the −0.29% drop is accounted for by the newly
-added modes absorbing the difference, so it demonstrates *convergence within the < 2% criterion* —
+"EME can never give insertion loss". Also note that the −0.29% drop is accounted for by the enlarged port-mode basis — 0.246% of it into the two channels that exist only at 6 modes (out4/out5) and 0.044% into out2/out3 (per-channel column sums, run record) — so it demonstrates *convergence within the < 2% criterion* —
 not convergence to < 1%.
 
 ---
@@ -136,7 +137,7 @@ not convergence to < 1%.
 ### 5.1 Origin of the observation
 
 The coupler-segment run with **4 port modes** gives column sums of 0.99889–0.99999 — no loss channel
-inside the port-mode basis — while the device function in the same run reads 99.525%.
+inside the port-mode basis — while the key channel in the same run reads 99.525%.
 
 A second reason not to take that reading at face value: on this route the same device returns widely
 inconsistent results depending on the constraint and the port-mode count used.
@@ -144,9 +145,9 @@ inconsistent results depending on the constraint and the port-mode count used.
 | run | constraint | port modes | result |
 |---|---|---|---|
 | all-device | `unitary` | 4 | conversion **92.4–96.7%** across the C-band (9 frequencies, 1.50–1.58 µm) |
-| all-device | `passive` | 2 | **TE0 → out0 = 0.14%** (IL **28.539 dB**); TM0 → out1 = 0.03% (IL **34.981 dB**) |
+| all-device | `passive` | 2 | **TE0 → out0 = 0.14%** (IL **28.539 dB**); TM0 → out1 = 0.032% (IL **34.981 dB**) |
 
-Both rows describe the same device on the same route, and they differ by three orders of magnitude.
+Both rows describe the same device on the same route, and they differ by up to three orders of magnitude.
 They cannot both be device performance; what changed between them is the constraint and the port-mode
 count. Every number in that table is therefore marked *not referenceable*, and none of them are quoted
 as device performance here.
@@ -180,7 +181,7 @@ The figure is an external (matplotlib) re-plot of the tabulated results, not a s
 ### 5.3 What follows, and the honest limits of it
 
 - **Referenceable**: `TM0 → TE1 = 98.35%` (taper, 3D FDTD) and `TE1 → lower-arm TE0 = 99.233%`
-  (coupler, 6 modes, converged). Both are **port-mode-basis** conversions.
+  (coupler, 6 modes, converged). Both are **port-mode-basis** conversions — a mode-basis overlap integral at a port — and **not device efficiencies**.
 - **Not referenceable**: device-level absolute insertion loss / return loss from this route.
   The evidence is the column sums above; the remaining options are an **all-device 3D FDTD**
   (estimated ≈ 30 FlexCredit here) or **measurement**.
@@ -220,10 +221,10 @@ all versions: [10.5281/zenodo.22976303](https://doi.org/10.5281/zenodo.22976303)
    - taper segment **TM0 → TE1 = 98.35%** (3D FDTD, λ = 1.55 µm).
 2. **Not referenceable (uncertified)**: **device-level absolute insertion loss / return loss**.
    Basis (with evidence): EME port column sums ≈ 1 (4 modes 0.99889–0.99999; 6 modes 0.99973–0.99999)
-   ⇒ **"increasing the number of port modes" cannot expose radiation loss** (falsified by measurement,
+   ⇒ **"increasing the number of port modes" cannot expose radiation loss** (the opposite expectation — that the column sums would fall below 1 once modes were added — was falsified by that 4 → 6 run,
    2026-09-12); that figure must come from an **all-device 3D FDTD** (estimated ≈ 30 FlexCredit here)
    or from **measurement**.
-   Also: the **output section (S-bend + `L_t`, x 405…537.8 µm) was not measured**
+   Also: the **output section (S-bend + `L_t`, x 405…537.8 µm) was not simulated**
    ⇒ device-level insertion loss is uncertified.
 3. **Single frequency only**: the values above were verified only at λ = 1.55 µm; the bandwidth curves
    remain **unconverged** data ⇒ they may be read as trends only, not as figures of merit.
@@ -303,7 +304,7 @@ project files. They are *results*, not dependencies — the scripts above regene
 
 **器件级绝对插损我拒绝给数**：EME 端口功率逐列和恒 ≈ 1，把端口模式数从 4 加到 6 之后
 列和**没有**降到 <1（最低值反而从 0.99889 升到 0.99973）—— "加模式数就能暴露辐射损耗"
-这条直觉被实测否证。要这个指标只能走全器件 3D FDTD 或流片实测。
+这条直觉被那次 4→6 的 EME 运行否证（运行记录见 `notes/`）。要这个指标只能走全器件 3D FDTD 或流片实测。
 
 **可引用的只有两个数**：`98.35%` 与 `99.233%`；引用时请一并引用 §6 的限制条款。
 （配套工程报告**随本仓发布**（英文原文见 §1–§8 与 notebook）；它的永久可引用副本 = 归档版本：

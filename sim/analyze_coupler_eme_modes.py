@@ -164,7 +164,7 @@ try:
         P("IDENT BY NEFF/CENTROID: i_TE1=%d (neff=%.4f) | o_bottom=%s | o_top=%s"
           % (i_te1, tin[i_te1], o_bot, o_top))
         if o_bot is not None and o_top is not None:
-            P("KEY  in%d (TE1) -> out%d (bottom TE0) = %.5f   <== device function"
+            P("KEY  in%d (TE1) -> out%d (bottom TE0) = %.5f   <== key channel"
               % (i_te1, o_bot, t[o_bot, i_te1]))
             P("     in%d (TE1) -> out%d (top TE0)    = %.5f   (unwanted)"
               % (i_te1, o_top, t[o_top, i_te1]))
