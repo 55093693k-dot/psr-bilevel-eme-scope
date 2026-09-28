@@ -49,10 +49,7 @@ for ax, (title, ribs) in zip(axs, PANELS):
     for yc, w in ribs:
         ax.add_patch(Rectangle((yc - w / 2, T_PES), w, T_SI, fc=SI, ec="#7a2f1c",
                                lw=0.7, zorder=3))
-        ax.add_patch(Polygon([[yc - w / 2, T_PES + T_SI + 0.075],
-                              [yc + w / 2, T_PES + T_SI + 0.075],
-                              [yc, T_PES + T_SI - 0.02]],
-                             closed=True, fc=PORT, ec="none", zorder=4))
+        # 端口不画三角形：横截面看不出传播方向，图上只留几何（端口在图注里用文字说明）
     ax.set_xlim(-1.05, 1.05)
     ax.set_ylim(-0.18, 0.68)
     ax.set_xlabel("y (µm)", fontsize=10)
