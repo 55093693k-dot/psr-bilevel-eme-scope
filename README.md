@@ -14,7 +14,7 @@ Short version:
   `TM0 → TE1 = 98.35%` (3D FDTD, taper segment) and `TE1 → lower-arm TE0 = 99.233%`
   (3D EME, coupler segment; passes a 4→6 port-mode convergence check, Δ = −0.29%).
 - **Device-level absolute insertion loss is deliberately not quoted.** In this structure the EME
-  port-power column sums stay ≈ 1 even after adding port modes (4 → 6), so no radiation-loss
+  port-power column sums stay ≈ 1 even after adding port modes (4 → 6), so within this port-mode basis no radiation-loss
   channel ever appears in the port-mode basis. Adding modes was tested and **ruled out as a route**
   to the loss number.
 - Read [`§5`](#5-why-this-repo-exists-the-column-sum-observation) for the observation and
@@ -222,7 +222,7 @@ all versions: [10.5281/zenodo.22976303](https://doi.org/10.5281/zenodo.22976303)
    - taper segment **TM0 → TE1 = 98.35%** (3D FDTD, λ = 1.55 µm).
 2. **Not referenceable (uncertified)**: **device-level absolute insertion loss / return loss**.
    Basis (with evidence): EME port column sums ≈ 1 (4 modes 0.99889–0.99999; 6 modes 0.99973–0.99999)
-   ⇒ **"increasing the number of port modes" cannot expose radiation loss** (the opposite expectation — that the column sums would fall below 1 once modes were added — was falsified by that 4 → 6 run,
+   ⇒ **"increasing the number of port modes" did not expose an additional loss channel within this port-mode basis** (it cannot show what the basis cannot represent) (the opposite expectation — that the column sums would fall below 1 once modes were added — was falsified by that 4 → 6 run,
    2026-09-12); that figure must come from an **all-device 3D FDTD** (estimated ≈ 30 FlexCredit here)
    or from **measurement**.
    Also: the **output section (S-bend + `L_t`, x 405…537.8 µm) was not simulated**
