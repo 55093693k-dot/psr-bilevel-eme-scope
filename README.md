@@ -164,7 +164,7 @@ the sums will drop below 1."* That was the question; the 4 → 6 run was designe
 variable to test it, with the pre-run criterion that the key channel must change by < 2%.
 
 **It did not happen.** The minimum column sum moved from 0.99889 to 0.99973 — *upward*. Adding modes
-did not open a radiation-loss channel in this structure.
+did not expose an additional loss channel within this port-mode basis --- the test bounds what that basis can show, and does not by itself prove the absence of radiative content outside it.
 
 ![Column sums and conversion versus port-mode count](figures/colsum_and_conversion_vs_modes.png)
 
@@ -198,6 +198,7 @@ listed above.
   scope of this work.
 - The `unitary` vs `passive` discrepancy in §5.1 is **not explained** here;
   both sets of numbers from that pair are marked not referenceable as a result.
+- Whether the **port-mode basis covers every loss channel** (in particular radiative content a guided-mode basis cannot represent) is **not verified**; only the column-sum deficit (about 0.1%) bounds it;
 - Device-level return loss, and the insertion loss of the output section (S-bend + `L_t`), are **not
   addressed**.
 
